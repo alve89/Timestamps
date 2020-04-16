@@ -1,0 +1,3 @@
+Timestamps	KEYWORD1
+getTimestampUNIX	KEYWORD2
+getTimestampNTP	KEYWORD2
