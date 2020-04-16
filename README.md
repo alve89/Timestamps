@@ -1,5 +1,5 @@
 # Timestamps
-A library, mainly for Arduino clients, to generate timestamps (both UNIX and NTP) for given dates/times
+A standalone library, mainly for Arduino clients, to generate timestamps (both UNIX and NTP) for given dates/times
 
 ## Examples
 You can find simple examples in the [examples](https://github.com/alve89/Timestamps/blob/master/examples/getTimestamps.ino).
