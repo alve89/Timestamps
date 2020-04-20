@@ -12,22 +12,22 @@ Timestamps::Timestamps(int timeZoneOffset=0) {
 }
 
 bool Timestamps::isLeapYear(unsigned int year) {
-if (year % 4 == 0) {
-		if (year % 100 == 0) {
-				if (year % 400 == 0) {
-						return true;
-				}
-				else {
-						return false;
-				}
-		}
-		else {
-				return true;
-		}
-}
-else {
-		return false;
-}
+	if (year % 4 == 0) {
+			if (year % 100 == 0) {
+					if (year % 400 == 0) {
+							return true;
+					}
+					else {
+							return false;
+					}
+			}
+			else {
+					return true;
+			}
+	}
+	else {
+			return false;
+	}
 }
 
 unsigned int Timestamps::getTimestamp(int referenceYear, int year, int month, int day, int hour, int minute, int second, int timeZoneOffset=0) {
@@ -96,13 +96,90 @@ unsigned int Timestamps::getTimestamp(int referenceYear, int year, int month, in
 }
 
 unsigned int Timestamps::getTimestampUNIX(int year, int month, int day, int hour, int minute, int second, int timeZoneOffset=0) {
-return getTimestamp(1970, year, month, day, hour, minute, second, timeZoneOffset);
+	return getTimestamp(1970, year, month, day, hour, minute, second, timeZoneOffset);
 }
 
 unsigned int Timestamps::getTimestampNTP(int year, int month, int day, int hour, int minute, int second, int timeZoneOffset=0) {
-return getTimestamp(1900, year, month, day, hour, minute, second, timeZoneOffset);
+	return getTimestamp(1900, year, month, day, hour, minute, second, timeZoneOffset);
 }
+
+int* Timestamps::getDateFromTimestamp(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	int y = referenceYear; // this returns the current year. Default is referenceYear, which will be incremented.
+	int month = 0; // this returns the current month
+
+	timestamp += timeOffset;
+
+	while(timestamp/(365*secondsPerDay) > 0) {
+		timestamp -= 365*secondsPerDay;
+		if(isLeapYear(y)) {
+				// Year is leap year -> substract one more day
+				timestamp -= secondsPerDay;
+		}
+		y++;
+	}
+	formattedDate[0] = y;
+
+	for(int m=1; m<=12; m++) {
+		timestamp = timestamp - (daysPerMonth[m-1]*secondsPerDay);
+		cout << m << endl;
+		if(timestamp - (daysPerMonth[m]*secondsPerDay) < 0) {
+				month = m+1;
+				break;
+		}
+	}
+	formattedDate[1] = month;
+
+	int d = timestamp/secondsPerDay;
+	timestamp = timestamp - d*secondsPerDay;
+	formattedDate[2] = d;
+
+	int h = timestamp/3600;
+	timestamp = timestamp - h*3600;
+	formattedDate[3] = h;
+
+	int m = timestamp / 60;
+	timestamp = timestamp - m*60;
+	formattedDate[4] = m;
+
+	int s = timestamp % 60;
+	formattedDate[5] = s;
+
+	return formattedDate;
+}
+
+// Returns year of given timestamp
+int Timestamps::getYears(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	return getDateFromTimestamp(timestamp, timeOffset, referenceYear)[0];
+}
+
+// Returns month of given timestamp
+int Timestamps::getMonths(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	return getDateFromTimestamp(timestamp, timeOffset, referenceYear)[1];
+}
+
+// Returns day of given timestamp
+int Timestamps::getDays(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	return getDateFromTimestamp(timestamp, timeOffset, referenceYear)[2];
+}
+
+// Returns hours of given timestamp
+int Timestamps::getHours(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	return getDateFromTimestamp(timestamp, timeOffset, referenceYear)[3];
+}
+
+// Returns minutes of given timestamp
+int Timestamps::getMinutes(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	return getDateFromTimestamp(timestamp, timeOffset, referenceYear)[4];
+}
+
+// Returns seconds of given timestamp
+int Timestamps::getSeconds(int timestamp, int timeOffset=0, int referenceYear=1970) {
+	return getDateFromTimestamp(timestamp, timeOffset, referenceYear)[5];
+}
+
+
 
 int Timestamps::secondsPerHour = 60*60;
 int Timestamps::secondsPerDay = 24 * secondsPerHour;
 int Timestamps::daysPerMonth[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+int formattedDate[6] = {0,0,0,0,0,0};
