@@ -22,7 +22,7 @@ class Timestamps {
 		int formattedDate[6] = {0,0,0,0,0,0};
 
 	public:
-		Timestamps(int setTimeZoneOffset);
+		Timestamps(int setTimeZoneOffset=0);
 		unsigned int getTimestampUNIX(int year, int month, int day, int hour, int minute, int second, int setTimeZoneOffset=0);
 		unsigned int getTimestampNTP(int year, int month, int day, int hour, int minute, int second, int setTimeZoneOffset=0);
 		bool isLeapYear(unsigned int year);

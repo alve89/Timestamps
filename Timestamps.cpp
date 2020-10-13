@@ -4,10 +4,9 @@
   Released into the public domain.
 */
 
-#include "Arduino.h"
 #include "Timestamps.h"
 
-Timestamps::Timestamps(int timeZoneOffset=0) {
+Timestamps::Timestamps(int timeZoneOffset) {
 	_timeZoneOffset = timeZoneOffset;
 }
 
@@ -30,7 +29,7 @@ bool Timestamps::isLeapYear(unsigned int year) {
 	}
 }
 
-unsigned int Timestamps::getTimestamp(int referenceYear, int year, int month, int day, int hour, int minute, int second, int timeZoneOffset=0) {
+unsigned int Timestamps::getTimestamp(int referenceYear, int year, int month, int day, int hour, int minute, int second, int timeZoneOffset) {
 	unsigned int timestamp=0;
 	// Either use the time zone offset value from instantiating or the given paramter
 	/*
@@ -57,45 +56,41 @@ unsigned int Timestamps::getTimestamp(int referenceYear, int year, int month, in
 
 	timestamp += timeZoneOffset;
 
-	day <= 0 ? day=0 : day=day-1;
+
+	//day <= 0 ? day=0 : day=day-1;
+  day <= 0 ? day=0 : day=day-1;
 	hour <= 0 ? hour=0 : hour=hour-1;
 
 	for(int y=referenceYear; y<year; y++) {
-			timestamp += 365*secondsPerDay;
+    timestamp += 365*secondsPerDay;
 
-			if(isLeapYear(y)) {
-					// Year is leap year -> add one day to timestamp
-					timestamp += secondsPerDay;
-			}
+    if(isLeapYear(y)) {
+        // Year is leap year -> add one day to timestamp
+        timestamp += secondsPerDay;
+    }
 	}
 
-	for(int m=1; m<=month; m++) {
-		if(month == 1) {
-			// we're still in January
-			timestamp += day * secondsPerDay; // time until yesterday evening / tonight 0:00
-			timestamp += hour * secondsPerHour;
-			timestamp += minute*60;
-			timestamp += second;
-		}
-		if(month > 1) {
-			timestamp += daysPerMonth[m-1] * secondsPerDay; // last month
 
-			timestamp += day * secondsPerDay; // time until yesterday evening / tonight 0:00
-			timestamp += hour * secondsPerHour;
-			timestamp += minute*60;
-			timestamp += second;
-
-			if(isLeapYear(year) == 0 && month == 3) {
-					// current year is leap year, so 29.02. exists
-					// Since we're in March now, add the 29.02. to the timestamp
-					timestamp += secondsPerDay; // 29.02.
-			}
-		}
+	for(int m=1; m<month; m++) {
+    timestamp += daysPerMonth[m-1] * secondsPerDay; // last month
 	}
+
+  if(isLeapYear(year) && month >= 3) {
+    // current year is leap year, so 29.02. exists
+    // Since we're in March now, add the 29.02. to the timestamp
+    timestamp += secondsPerDay; // 29.02.
+  }
+
+  timestamp += day * secondsPerDay; // time until yesterday evening / tonight 0:00
+  timestamp += hour * secondsPerHour;
+  timestamp += minute*60;
+  timestamp += second;
+
 	return timestamp;
 }
 
 unsigned int Timestamps::getTimestampUNIX(int year, int month, int day, int hour, int minute, int second, int timeZoneOffset) {
+
 	if(timeZoneOffset == 0) {
 		timeZoneOffset = _timeZoneOffset;
 	}
