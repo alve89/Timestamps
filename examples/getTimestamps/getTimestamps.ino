@@ -18,7 +18,7 @@ void setup() {
 
 void loop() {
 	Serial.print("UNIX timestamp: ");
-	// Get the timestamp for the given date (11. January 2020) and time (14:30:20)
+	// Get the timestamp for the given date (25. January 2020) and time (14:30:20)
 	Serial.println(ts.getTimestampUNIX(2020, 1, 25, 14, 30, 20)); // returns: 1579962620 (remember the given offset of 3600 seconds in line 9)
 
 	Serial.print("UNIX timestamp without offset: ");
